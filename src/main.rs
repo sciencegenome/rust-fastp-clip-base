@@ -18,7 +18,7 @@ use std::io::{BufRead, BufReader, Write};
 
 fn main() {
     let args = FastqArgs::parse();
-    fastqqualitydrop(
+    fastqualitydrop(
         &args.reads_1_arg,
         &args.reads_2_arg,
     );
@@ -29,3 +29,19 @@ fn main() {
     );
 }
 
+fn qualityscore() -> (Vec<usize>, Vec<&'static str>) {
+    let qualitystring = (33..75).collect::<Vec<usize>>();
+    let qualitydrop: Vec<_> = vec!["!", "\"\"", "#", "$", "%", "&","\'", "(", ")", "*", "+",",", "-", ".", "/", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", "@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"];
+    (qualitystring, qualitydrop)
+}
+
+fn fastqualitydrop(fastq1: &str, fastq2: &str){
+
+     let (qualitystring, qualitydrop) = qualityscore();
+
+}
+
+fn fastq_quality_drop(fastq1: &str, fastq2: &str){
+
+    let (qualitystring, qualitydrop) = qualityscore();
+}
