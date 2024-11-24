@@ -35,6 +35,14 @@ fn qualityscore() -> (Vec<usize>, Vec<Chars<'static>>) {
     .map(|x| x.chars())
     .collect::<Vec<_>>();
    let dropvec = (0..43).collect::<Vec<usize>>();
+   let mut combined_vec = Vec::new();
+// this returns a tuple now so that i can easily fetch the quality to be dropped without
+// reiterating over everything.
+
+   for (dropi, dropval) in dropval.iter().zip(dropvec.iter()){
+       let (i,j) = (dropi, dropval);
+       combined_vec.push((i,j));
+   }
     (dropvec, dropval)
 }
 
@@ -130,21 +138,71 @@ fn fastq_quality_drop(fastq1: &str, fastq2: &str, threshold: usize){
        quality:String,
    }
 
-   let fastq1_clean:Vec<FileFastqPost> = Vec::new();
+   // finished the last part of the implementation and implementing the requirement o fhte single
+   // base in the function call so that the tuplequality[j] can be defined at the command prompt.
+
+  let mut writecleaned_header_1:Vec<String> = Vec::new();
+  let mut writecleaned_sequence_1:Vec<String> = Vec::new();
+  let mut writecleaned_strand_1:Vec<String> = Vec::new();
+  let mut writecleaned_quality_1:Vec<String> = Vec::new();
     for i in fastq_1.iter_mut(){
         let mut tupleseq = i.sequence.clone().chars().collect::<Vec<_>>();
         let mut tuplequality = i.quality.clone().chars().collect::<Vec<_>>();
-            let mut tupleclean = Vec::new();
-            let mut tuplequalityclean = Vec::new();
-            for j in 0..tupleseq.len() {
-                  if tuplequality[j] == '@' {
+        let mut tupleclean = Vec::new();
+        let mut tuplequalityclean = Vec::new();
+        let mut finaltupleclean = Vec::new();
+        let mut finaltuplequalityclean = Vec::new();
+        for j in 0..tupleseq.len() {
+                  if tuplequality[j] == '#' {
                   continue
                 } else {
                     tupleclean.push(tupleseq[j].to_string());
                     tuplequalityclean.push(tuplequality[j].to_string());
+                    finaltupleclean.push(tupleclean.join("").to_string());
+                    finaltuplequalityclean.push(tuplequalityclean.join("").to_string());
                 }
-        }
-        println!("{:?}, {:?}", tupleclean.join(""), tuplequalityclean.join(""));
+            }
+            writecleaned_header_1.push(i.header.to_string());
+            writecleaned_sequence_1.push(tupleclean.join("").to_string());
+            writecleaned_strand_1.push(i.strand.to_string());
+            writecleaned_quality_1.push(tuplequalityclean.join("").to_string());
+    }
+    let mut fileopen_1 = File::create("single-quality-drop1.fastq").expect("file not present");
+    for i in 0..writecleaned_header_1.len(){
+                write!(fileopen_1, "{}\n{}\n{}\n{}\n", writecleaned_header_1[i], writecleaned_sequence_1[i],
+                 writecleaned_strand_1[i], writecleaned_quality_1[i]);
+   }
+
+   let mut writecleaned_header_2:Vec<String> = Vec::new();
+   let mut writecleaned_sequence_2:Vec<String> = Vec::new();
+   let mut writecleaned_strand_2:Vec<String> = Vec::new();
+   let mut writecleaned_quality_2:Vec<String> = Vec::new();
+    for i in fastq_2.iter_mut(){
+        let mut tupleseq = i.sequence.clone().chars().collect::<Vec<_>>();
+        let mut tuplequality = i.quality.clone().chars().collect::<Vec<_>>();
+        let mut tupleclean = Vec::new();
+        let mut tuplequalityclean = Vec::new();
+        let mut finaltupleclean = Vec::new();
+        let mut finaltuplequalityclean = Vec::new();
+        for j in 0..tupleseq.len() {
+                  if tuplequality[j] == '#' {
+                  continue
+                } else {
+                    tupleclean.push(tupleseq[j].to_string());
+                    tuplequalityclean.push(tuplequality[j].to_string());
+                    finaltupleclean.push(tupleclean.join("").to_string());
+                    finaltuplequalityclean.push(tuplequalityclean.join("").to_string());
+                }
+            }
+            writecleaned_header_2.push(i.header.to_string());
+            writecleaned_sequence_2.push(tupleclean.join("").to_string());
+            writecleaned_strand_2.push(i.strand.to_string());
+            writecleaned_quality_2.push(tuplequalityclean.join("").to_string());
+    }
+    let mut fileopen_2 = File::create("single-quality-drop2.fastq").expect("file not present");
+    for i in 0..writecleaned_header_2.len(){
+                write!(fileopen_2, "{}\n{}\n{}\n{}\n", writecleaned_header_2[i], writecleaned_sequence_2[i],
+                 writecleaned_strand_2[i], writecleaned_quality_2[i]);
     }
 
    }
